@@ -16,7 +16,13 @@ export const IconHelper = {
 
       // 验证内容类型
       const contentType = response.headers.get('content-type')
-      if (!contentType?.startsWith('image/')) return null
+      // 增加对 ICO 格式的支持
+      const validImageTypes = ['image/', 'image/x-icon', 'image/vnd.microsoft.icon']
+      const isValidImage = validImageTypes.some((type) => contentType?.startsWith(type))
+      if (!isValidImage) {
+        console.log('Invalid content type:', contentType)
+        return null
+      }
 
       // 转换为base64
       const blob = await response.blob()
