@@ -341,6 +341,15 @@
       "qwenlm": "QwenLM"
     },
     "settings": {
+      "custom_minapp": {
+        "title": "自定义小程序",
+        "name": "名称",
+        "url": "网址",
+        "actions": "操作",
+        "add": "添加小程序",
+        "name_required": "请输入名称",
+        "url_required": "请输入网址"
+      },
       "about": "关于我们",
       "about.checkUpdate": "检查更新",
       "about.checkUpdate.available": "立即更新",

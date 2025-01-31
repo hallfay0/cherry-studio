@@ -138,10 +138,20 @@ export interface Painting {
   promptEnhancement?: boolean
 }
 
+export type IconSourceType = 'url' | 'base64' | 'local'
+
+export interface MinAppIcon {
+  type: IconSourceType
+  value: string
+  originalUrl?: string
+}
+
+export type MinAppLogoType = MinAppIcon | string
+
 export type MinAppType = {
   id?: string | number
   name: string
-  logo?: string
+  logo?: MinAppLogoType
   url: string
   bodered?: boolean
   background?: string

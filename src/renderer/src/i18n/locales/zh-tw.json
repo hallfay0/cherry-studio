@@ -340,6 +340,15 @@
       "qwenlm": "QwenLM"
     },
     "settings": {
+      "custom_minapp": {
+        "title": "自定義小程式",
+        "name": "名稱",
+        "url": "網址",
+        "actions": "操作",
+        "add": "添加小程式",
+        "name_required": "請輸入名稱",
+        "url_required": "請輸入網址"
+      },
       "about": "關於與回饋",
       "about.checkUpdate": "檢查更新",
       "about.checkUpdate.available": "立即更新",

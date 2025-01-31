@@ -42,231 +42,339 @@ export const DEFAULT_MIN_APPS: MinAppType[] = [
     id: 'openai',
     name: 'ChatGPT',
     url: 'https://chatgpt.com/',
-    logo: OpenAiProviderLogo,
+    logo: {
+      type: 'local',
+      value: OpenAiProviderLogo
+    },
     bodered: true
   },
   {
     id: 'gemini',
     name: 'Gemini',
     url: 'https://gemini.google.com/',
-    logo: GeminiAppLogo
+    logo: {
+      type: 'local',
+      value: GeminiAppLogo
+    }
   },
   {
     id: 'silicon',
     name: 'SiliconFlow',
     url: 'https://cloud.siliconflow.cn/playground/chat',
-    logo: SiliconFlowProviderLogo
+    logo: {
+      type: 'local',
+      value: SiliconFlowProviderLogo
+    }
   },
   {
     id: 'deepseek',
     name: 'DeepSeek',
     url: 'https://chat.deepseek.com/',
-    logo: DeepSeekProviderLogo
+    logo: {
+      type: 'local',
+      value: DeepSeekProviderLogo
+    }
   },
   {
     id: 'yi',
     name: '万知',
     url: 'https://www.wanzhi.com/',
-    logo: WanZhiAppLogo,
+    logo: {
+      type: 'local',
+      value: WanZhiAppLogo
+    },
     bodered: true
   },
   {
     id: 'zhipu',
     name: '智谱清言',
     url: 'https://chatglm.cn/main/alltoolsdetail',
-    logo: ZhipuProviderLogo
+    logo: {
+      type: 'local',
+      value: ZhipuProviderLogo
+    }
   },
   {
     id: 'moonshot',
     name: 'Kimi',
     url: 'https://kimi.moonshot.cn/',
-    logo: KimiAppLogo
+    logo: {
+      type: 'local',
+      value: KimiAppLogo
+    }
   },
   {
     id: 'baichuan',
     name: '百小应',
     url: 'https://ying.baichuan-ai.com/chat',
-    logo: BaicuanAppLogo
+    logo: {
+      type: 'local',
+      value: BaicuanAppLogo
+    }
   },
   {
     id: 'dashscope',
     name: '通义千问',
     url: 'https://tongyi.aliyun.com/qianwen/',
-    logo: QwenModelLogo
+    logo: {
+      type: 'local',
+      value: QwenModelLogo
+    }
   },
   {
     id: 'stepfun',
     name: '跃问',
     url: 'https://yuewen.cn/chats/new',
-    logo: YuewenAppLogo,
+    logo: {
+      type: 'local',
+      value: YuewenAppLogo
+    },
     bodered: true
   },
   {
     id: 'doubao',
     name: '豆包',
     url: 'https://www.doubao.com/chat/',
-    logo: DoubaoAppLogo
+    logo: {
+      type: 'local',
+      value: DoubaoAppLogo
+    }
   },
   {
     id: 'minimax',
     name: '海螺',
     url: 'https://hailuoai.com/',
-    logo: HailuoModelLogo
+    logo: {
+      type: 'local',
+      value: HailuoModelLogo
+    }
   },
   {
     id: 'groq',
     name: 'Groq',
     url: 'https://chat.groq.com/',
-    logo: GroqProviderLogo
+    logo: {
+      type: 'local',
+      value: GroqProviderLogo
+    }
   },
   {
     id: 'anthropic',
     name: 'Claude',
     url: 'https://claude.ai/',
-    logo: ClaudeAppLogo
+    logo: {
+      type: 'local',
+      value: ClaudeAppLogo
+    }
   },
   {
     id: 'baidu-ai-chat',
     name: '文心一言',
-    logo: BaiduAiAppLogo,
+    logo: {
+      type: 'local',
+      value: BaiduAiAppLogo
+    },
     url: 'https://yiyan.baidu.com/'
   },
   {
     id: 'tencent-yuanbao',
     name: '腾讯元宝',
-    logo: TencentYuanbaoAppLogo,
+    logo: {
+      type: 'local',
+      value: TencentYuanbaoAppLogo
+    },
     url: 'https://yuanbao.tencent.com/chat',
     bodered: true
   },
   {
     id: 'sensetime-chat',
     name: '商量',
-    logo: SensetimeAppLogo,
+    logo: {
+      type: 'local',
+      value: SensetimeAppLogo
+    },
     url: 'https://chat.sensetime.com/wb/chat',
     bodered: true
   },
   {
     id: 'spark-desk',
     name: 'SparkDesk',
-    logo: SparkDeskAppLogo,
+    logo: {
+      type: 'local',
+      value: SparkDeskAppLogo
+    },
     url: 'https://xinghuo.xfyun.cn/desk'
   },
   {
     id: 'metaso',
     name: '秘塔AI搜索',
-    logo: MetasoAppLogo,
+    logo: {
+      type: 'local',
+      value: MetasoAppLogo
+    },
     url: 'https://metaso.cn/'
   },
   {
     id: 'poe',
     name: 'Poe',
-    logo: PoeAppLogo,
+    logo: {
+      type: 'local',
+      value: PoeAppLogo
+    },
     url: 'https://poe.com'
   },
   {
     id: 'perplexity',
     name: 'perplexity',
-    logo: PerplexityAppLogo,
-    url: 'https://www.perplexity.ai/'
+    url: 'https://www.perplexity.ai/',
+    logo: {
+      type: 'local',
+      value: PerplexityAppLogo
+    }
   },
   {
     id: 'devv',
     name: 'DEVV_',
-    logo: DevvAppLogo,
-    url: 'https://devv.ai/'
+    url: 'https://devv.ai/',
+    logo: {
+      type: 'local',
+      value: DevvAppLogo
+    }
   },
   {
     id: 'tiangong-ai',
     name: '天工AI',
-    logo: TiangongAiLogo,
     url: 'https://www.tiangong.cn/',
+    logo: {
+      type: 'local',
+      value: TiangongAiLogo
+    },
     bodered: true
   },
   {
     id: 'zhihu-zhiada',
     name: '知乎直答',
-    logo: ZhihuAppLogo,
     url: 'https://zhida.zhihu.com/',
+    logo: {
+      type: 'local',
+      value: ZhihuAppLogo
+    },
     bodered: true
   },
   {
     id: 'hugging-chat',
     name: 'HuggingChat',
-    logo: HuggingChatLogo,
     url: 'https://huggingface.co/chat/',
+    logo: {
+      type: 'local',
+      value: HuggingChatLogo
+    },
     bodered: true
   },
   {
     id: 'Felo',
     name: 'Felo',
-    logo: FeloAppLogo,
     url: 'https://felo.ai/',
+    logo: {
+      type: 'local',
+      value: FeloAppLogo
+    },
     bodered: true
   },
   {
     id: 'duckduckgo',
     name: 'DuckDuckGo',
-    logo: DuckDuckGoAppLogo,
-    url: 'https://duck.ai'
+    url: 'https://duck.ai',
+    logo: {
+      type: 'local',
+      value: DuckDuckGoAppLogo
+    }
   },
   {
     id: 'bolt',
     name: 'bolt',
-    logo: BoltAppLogo,
     url: 'https://bolt.new/',
+    logo: {
+      type: 'local',
+      value: BoltAppLogo
+    },
     bodered: true
   },
   {
     id: 'nm',
     name: '纳米AI搜索',
-    logo: NamiAiSearchLogo,
     url: 'https://www.n.cn/',
+    logo: {
+      type: 'local',
+      value: NamiAiSearchLogo
+    },
     bodered: true
   },
   {
     id: 'thinkany',
     name: 'ThinkAny',
-    logo: ThinkAnyLogo,
     url: 'https://thinkany.ai/',
+    logo: {
+      type: 'local',
+      value: ThinkAnyLogo
+    },
     bodered: true
   },
   {
     id: 'hika',
     name: 'Hika',
-    logo: HikaLogo,
     url: 'https://hika.fyi/',
+    logo: {
+      type: 'local',
+      value: HikaLogo
+    },
     bodered: true
   },
   {
     id: 'github-copilot',
     name: 'GitHub Copilot',
-    logo: GithubCopilotLogo,
-    url: 'https://github.com/copilot'
+    url: 'https://github.com/copilot',
+    logo: {
+      type: 'local',
+      value: GithubCopilotLogo
+    }
   },
   {
     id: 'genspark',
     name: 'Genspark',
-    logo: GensparkLogo,
-    url: 'https://www.genspark.ai/'
+    url: 'https://www.genspark.ai/',
+    logo: {
+      type: 'local',
+      value: GensparkLogo
+    }
   },
   {
     id: 'grok',
     name: 'Grok',
-    logo: GrokAppLogo,
     url: 'https://grok.com',
+    logo: {
+      type: 'local',
+      value: GrokAppLogo
+    },
     bodered: true
   },
   {
     id: 'qwenlm',
     name: 'QwenLM',
-    logo: QwenlmAppLogo,
-    url: 'https://qwenlm.ai/'
+    url: 'https://qwenlm.ai/',
+    logo: {
+      type: 'local',
+      value: QwenlmAppLogo
+    }
   },
   {
     id: 'flowith',
     name: 'Flowith',
-    logo: FlowithAppLogo,
     url: 'https://www.flowith.io/',
+    logo: {
+      type: 'local',
+      value: FlowithAppLogo
+    },
     bodered: true
   }
 ]
