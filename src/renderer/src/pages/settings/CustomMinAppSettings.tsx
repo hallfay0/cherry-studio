@@ -111,8 +111,12 @@ const CustomMinAppSettings: FC = () => {
       if (editingApp) {
         const updatedApps = minapps.map((app) => (app.id === editingApp.id ? newApp : app))
         updateMinapps(updatedApps)
-        if (pinned.some((p) => p.id === editingApp.id)) {
-          const updatedPinned = pinned.map((app) => (app.id === editingApp.id ? newApp : app))
+        if (pinToSidebar) {
+          if (!pinned.some((p) => p.id === editingApp.id)) {
+            updatePinnedMinapps([...pinned, newApp])
+          }
+        } else {
+          const updatedPinned = pinned.filter((p) => p.id !== editingApp.id)
           updatePinnedMinapps(updatedPinned)
         }
       } else {
@@ -153,6 +157,7 @@ const CustomMinAppSettings: FC = () => {
         }
       }
     }
+    setPinToSidebar(pinned.some((p) => p.id === app.id))
     form.setFieldsValue({
       name: app.name,
       url: app.url
@@ -267,7 +272,13 @@ const CustomMinAppSettings: FC = () => {
       <SettingGroup theme={theme}>
         <SettingTitle style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {t('settings.custom_minapp.title')}
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsAdding(true)}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              handleCancel()
+              setIsAdding(true)
+            }}>
             {t('settings.custom_minapp.add')}
           </Button>
         </SettingTitle>
@@ -307,11 +318,9 @@ const CustomMinAppSettings: FC = () => {
               }>
               {renderIconInput()}
             </Form.Item>
-            {!editingApp && (
-              <Form.Item label={t('固定到侧边栏')}>
-                <Switch checked={pinToSidebar} onChange={(checked) => setPinToSidebar(checked)} />
-              </Form.Item>
-            )}
+            <Form.Item label={t('固定到侧边栏')}>
+              <Switch checked={pinToSidebar} onChange={(checked) => setPinToSidebar(checked)} />
+            </Form.Item>
             <Form.Item>
               <Button type="primary" onClick={handleAdd} style={{ marginRight: 8 }}>
                 {editingApp ? t('common.save') : t('添加')}
