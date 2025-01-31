@@ -29,16 +29,34 @@ const minAppsSlice = createSlice({
   initialState,
   reducers: {
     setMinApps: (state, action: PayloadAction<MinAppType[]>) => {
-      state.enabled = action.payload.map((app) => ({ ...app, logo: undefined }))
+      state.enabled = action.payload.map((app) => {
+        if (app.id?.toString().startsWith('custom_')) {
+          return app
+        }
+        const defaultApp = DEFAULT_MIN_APPS.find((item) => item.id === app.id)
+        return defaultApp || app
+      })
     },
     addMinApp: (state, action: PayloadAction<MinAppType>) => {
       state.enabled.push(action.payload)
     },
     setDisabledMinApps: (state, action: PayloadAction<MinAppType[]>) => {
-      state.disabled = action.payload.map((app) => ({ ...app, logo: undefined }))
+      state.disabled = action.payload.map((app) => {
+        if (app.id?.toString().startsWith('custom_')) {
+          return app
+        }
+        const defaultApp = DEFAULT_MIN_APPS.find((item) => item.id === app.id)
+        return defaultApp || app
+      })
     },
     setPinnedMinApps: (state, action: PayloadAction<MinAppType[]>) => {
-      state.pinned = action.payload.map((app) => ({ ...app, logo: undefined }))
+      state.pinned = action.payload.map((app) => {
+        if (app.id?.toString().startsWith('custom_')) {
+          return app
+        }
+        const defaultApp = DEFAULT_MIN_APPS.find((item) => item.id === app.id)
+        return defaultApp || app
+      })
     }
   }
 })

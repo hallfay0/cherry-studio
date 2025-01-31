@@ -6,7 +6,7 @@ import { useBridge } from '@renderer/hooks/useBridge'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import store from '@renderer/store'
 import { setMinappShow } from '@renderer/store/runtime'
-import { MinAppType } from '@renderer/types'
+import { MinAppType, MinAppLogoType } from '@renderer/types'
 import { delay } from '@renderer/utils'
 import { Avatar, Drawer } from 'antd'
 import { WebviewTag } from 'electron'
@@ -32,7 +32,14 @@ const PopupContainer: React.FC<Props> = ({ app, resolve }) => {
   useBridge()
 
   const canOpenExternalLink = app.url.startsWith('http://') || app.url.startsWith('https://')
-  const canPinned = DEFAULT_MIN_APPS.some((i) => i.id === app?.id)
+  // 允许默认应用和自定义应用（ID以custom_开头）显示pin按钮
+  const canPinned = DEFAULT_MIN_APPS.some((i) => i.id === app?.id) || app.id?.toString().startsWith('custom_')
+
+  const getLogoSrc = (logo: MinAppLogoType | undefined): string => {
+    if (!logo) return ''
+    if (typeof logo === 'string') return logo
+    return logo.value
+  }
 
   const onClose = async (_delay = 0.3) => {
     setOpen(false)
@@ -127,7 +134,11 @@ const PopupContainer: React.FC<Props> = ({ app, resolve }) => {
       style={{ marginLeft: 'var(--sidebar-width)' }}>
       {!isReady && (
         <EmptyView>
-          <Avatar src={app.logo} size={80} style={{ border: '1px solid var(--color-border)', marginTop: -150 }} />
+          <Avatar
+            src={getLogoSrc(app.logo)}
+            size={80}
+            style={{ border: '1px solid var(--color-border)', marginTop: -150 }}
+          />
           <BeatLoader color="var(--color-text-2)" size="10" style={{ marginTop: 15 }} />
         </EmptyView>
       )}
