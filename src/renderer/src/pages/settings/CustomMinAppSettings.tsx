@@ -5,13 +5,15 @@ import { useTheme } from '@renderer/context/ThemeProvider'
 import { IconSourceType, MinAppIcon, MinAppType } from '@renderer/types'
 import { IconHelper } from '@renderer/utils/iconHelper'
 import { Button, Form, Input, Radio, Space, Switch, Table, Upload, message } from 'antd'
-import { FC, useState } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 const CustomMinAppSettings: FC = () => {
   const { t } = useTranslation()
   const { theme } = useTheme()
+  const location = useLocation()
   const { minapps, updateMinapps, pinned, updatePinnedMinapps } = useMinapps()
   const [form] = Form.useForm()
   const [isAdding, setIsAdding] = useState(false)
@@ -20,6 +22,14 @@ const CustomMinAppSettings: FC = () => {
   const [iconType, setIconType] = useState<IconSourceType>('url')
   const [iconPreview, setIconPreview] = useState<string>('')
   const [pinToSidebar, setPinToSidebar] = useState(false)
+
+  useEffect(() => {
+    const state = location.state as { editingApp?: MinAppType }
+    if (state?.editingApp) {
+      handleEdit(state.editingApp)
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state])
 
   const getIconSrc = (logo: MinAppType['logo']): string => {
     console.log('Getting icon src for logo:', logo)
@@ -74,7 +84,7 @@ const CustomMinAppSettings: FC = () => {
         setIconPreview(base64)
       }
       reader.readAsDataURL(file)
-      return false // 阻止自动上传
+      return false
     } catch (error) {
       console.error('Failed to upload icon:', error)
       message.error(t('settings.custom_minapp.icon_upload_failed'))
