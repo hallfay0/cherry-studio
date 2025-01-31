@@ -21,15 +21,30 @@ const AppsPage: FC = () => {
       )
     : minapps
 
-  // Calculate the required number of lines
-  const itemsPerRow = Math.floor(930 / 115) // Maximum width divided by the width of each item (including spacing)
-  const rowCount = Math.ceil(filteredApps.length / itemsPerRow)
-  // Each line height is 85px (60px icon + 5px margin + 12px text + spacing)
-  const containerHeight = rowCount * 85 + (rowCount - 1) * 25 // 25px is the line spacing.
+  const defaultApps = filteredApps.filter((app) => !app.id?.toString().startsWith('custom_'))
+  const customApps = filteredApps.filter((app) => app.id?.toString().startsWith('custom_'))
 
   // Disable right-click menu in blank area
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
+  }
+
+  const renderAppSection = (apps: typeof filteredApps, title: string) => {
+    if (isEmpty(apps)) return null
+
+    return (
+      <Section>
+        <AppsGrid>
+          <SectionTitle>
+            <TitleBar />
+            {title}
+          </SectionTitle>
+          {apps.map((app) => (
+            <App key={app.id} app={app} />
+          ))}
+        </AppsGrid>
+      </Section>
+    )
   }
 
   return (
@@ -51,16 +66,15 @@ const AppsPage: FC = () => {
         </NavbarCenter>
       </Navbar>
       <ContentContainer id="content-container">
-        <AppsContainer style={{ height: containerHeight }}>
-          {filteredApps.map((app) => (
-            <App key={app.id} app={app} />
-          ))}
+        <ContentWrapper>
+          {renderAppSection(defaultApps, t('默认应用'))}
+          {renderAppSection(customApps, t('自定义应用'))}
           {isEmpty(filteredApps) && (
             <Center style={{ flex: 1 }}>
               <Empty />
             </Center>
           )}
-        </AppsContainer>
+        </ContentWrapper>
       </ContentContainer>
     </Container>
   )
@@ -80,17 +94,48 @@ const ContentContainer = styled.div`
   justify-content: center;
   height: 100%;
   overflow-y: auto;
-  padding: 50px;
+  padding: 30px 50px;
 `
 
-const AppsContainer = styled.div`
-  display: grid;
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
   min-width: 0;
   max-width: 930px;
   width: 100%;
+`
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const AppsGrid = styled.div`
+  display: grid;
+  width: 100%;
   grid-template-columns: repeat(auto-fill, 90px);
-  gap: 25px;
-  justify-content: center;
+  column-gap: 25px;
+  row-gap: 25px;
+  justify-content: start;
+`
+
+const SectionTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  grid-column: 1/-1;
+  margin-bottom: 8px;
+`
+
+const TitleBar = styled.div`
+  width: 3px;
+  height: 14px;
+  background-color: var(--color-primary);
+  border-radius: 1.5px;
 `
 
 export default AppsPage

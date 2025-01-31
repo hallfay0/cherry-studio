@@ -19,6 +19,7 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   const { minapps, pinned, updatePinnedMinapps } = useMinapps()
   const isPinned = pinned.some((p) => p.id === app.id)
   const isVisible = minapps.some((m) => m.id === app.id)
+  const isCustomApp = Boolean(app.id?.toString().startsWith('custom_'))
 
   const handleClick = () => {
     MinApp.start(app)
@@ -41,7 +42,7 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
 
   return (
     <Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
-      <Container onClick={handleClick}>
+      <Container onClick={handleClick} $isCustom={isCustomApp}>
         <MinAppIcon size={size} app={app} />
         <AppTitle>{app.name}</AppTitle>
       </Container>
@@ -49,13 +50,21 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   )
 }
 
-const Container = styled.div`
+const Container = styled.div<{ $isCustom: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+  }
 `
 
 const AppTitle = styled.div`
