@@ -9,7 +9,7 @@ import {
 } from '@hello-pangea/dnd'
 import { DEFAULT_MIN_APPS } from '@renderer/config/minapps'
 import { useMinapps } from '@renderer/hooks/useMinapps'
-import { MinAppType } from '@renderer/types'
+import { MinAppType, MinAppLogoType } from '@renderer/types'
 import { FC, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -65,6 +65,12 @@ const reorderLists = ({
       destList: newDestList
     }
   }
+}
+
+const getLogoSrc = (logo: MinAppLogoType | undefined): string => {
+  if (!logo) return ''
+  if (typeof logo === 'string') return logo
+  return logo.value
 }
 
 const MiniAppIconsManager: FC<MiniAppManagerProps> = ({
@@ -129,12 +135,14 @@ const MiniAppIconsManager: FC<MiniAppManagerProps> = ({
   )
 
   const renderProgramItem = (program: MinAppType, provided: DraggableProvided, listType: ListType) => {
-    const { name, logo } = DEFAULT_MIN_APPS.find((app) => app.id === program.id) || { name: program.name, logo: '' }
+    const defaultApp = DEFAULT_MIN_APPS.find((app) => app.id === program.id)
+    const name = defaultApp?.name || program.name
+    const logo = defaultApp?.logo || program.logo
 
     return (
       <ProgramItem ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
         <ProgramContent>
-          <AppLogo src={logo} alt={name} />
+          <AppLogo src={getLogoSrc(logo)} alt={name} />
           <span>{name}</span>
         </ProgramContent>
         <CloseButton onClick={() => onMoveMiniApp(program, listType)}>
