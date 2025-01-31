@@ -7,6 +7,7 @@ import { Dropdown } from 'antd'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   app: MinAppType
@@ -16,7 +17,15 @@ interface Props {
 
 const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   const { t } = useTranslation()
-  const { minapps, pinned, updatePinnedMinapps } = useMinapps()
+  const navigate = useNavigate()
+  const {
+    minapps,
+    pinned,
+    updatePinnedMinapps,
+    updateMinapps,
+    updateDisabledMinapps,
+    disabled: disabledMinapps
+  } = useMinapps()
   const isPinned = pinned.some((p) => p.id === app.id)
   const isVisible = minapps.some((m) => m.id === app.id)
   const isCustomApp = Boolean(app.id?.toString().startsWith('custom_'))
@@ -24,6 +33,35 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   const handleClick = () => {
     MinApp.start(app)
     onClick?.()
+  }
+
+  const handleHideApp = () => {
+    const newVisible = minapps.filter((item) => item.id !== app.id)
+    const newDisabled = [...disabledMinapps, app]
+    updateMinapps(newVisible)
+    updateDisabledMinapps(newDisabled)
+    // 如果应用已固定，也需要从固定列表中移除
+    if (isPinned) {
+      const updatedPinned = pinned.filter((item) => item.id !== app.id)
+      updatePinnedMinapps(updatedPinned)
+    }
+  }
+
+  const handleEditApp = () => {
+    navigate('/settings/custom-minapp', {
+      state: { editingApp: app },
+      replace: true
+    })
+  }
+
+  const handleDeleteApp = () => {
+    const updatedApps = minapps.filter((item) => item.id !== app.id)
+    updateMinapps(updatedApps)
+    // 如果应用已固定，也需要从固定列表中移除
+    if (isPinned) {
+      const updatedPinned = pinned.filter((item) => item.id !== app.id)
+      updatePinnedMinapps(updatedPinned)
+    }
   }
 
   const menuItems: MenuProps['items'] = [
@@ -35,7 +73,27 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
         const newPinned = isPinned ? pinned.filter((item) => item.id !== app.id) : [...(pinned || []), app]
         updatePinnedMinapps(newPinned)
       }
-    }
+    },
+    {
+      key: 'hide',
+      label: t('隐藏该应用'),
+      onClick: handleHideApp
+    },
+    ...(isCustomApp
+      ? [
+          {
+            key: 'edit',
+            label: t('编辑该应用'),
+            onClick: handleEditApp
+          },
+          {
+            key: 'delete',
+            label: t('删除该应用'),
+            danger: true,
+            onClick: handleDeleteApp
+          }
+        ]
+      : [])
   ]
 
   if (!isVisible) return null
