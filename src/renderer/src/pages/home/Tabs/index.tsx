@@ -102,7 +102,7 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
         />
       )}
       <TabContent className="home-tabs-content">
-        {tab === 'assistants' && (
+        <TabPane style={{ display: tab === 'assistants' ? 'flex' : 'none' }}>
           <Assistants
             activeAssistant={activeAssistant}
             activeTopic={activeTopic}
@@ -111,8 +111,10 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
             onCreateDefaultAssistant={onCreateDefaultAssistant}
             setActiveTopic={setActiveTopic}
           />
-        )}
-        {tab === 'settings' && <Settings assistant={activeAssistant} />}
+        </TabPane>
+        <TabPane style={{ display: tab === 'settings' ? 'flex' : 'none' }}>
+          <Settings assistant={activeAssistant} />
+        </TabPane>
       </TabContent>
     </Container>
   )
@@ -138,6 +140,14 @@ const TabContent = styled.div`
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
+`
+
+const TabPane = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 `
 
 const Segmented = styled(AntSegmented)`
