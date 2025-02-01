@@ -61,6 +61,7 @@
       "artifacts.button.download": "ダウンロード",
       "artifacts.button.preview": "プレビュー",
       "assistant.search.placeholder": "検索",
+      "button.new_topic": "新しいトピック",
       "default.description": "こんにちは、私はデフォルトのアシスタントです。すぐにチャットを始められます。",
       "default.name": "⭐️ デフォルトアシスタント",
       "default.topic.name": "デフォルトトピック",

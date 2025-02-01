@@ -15,6 +15,7 @@ import { modelGenerating } from '@renderer/hooks/useRuntime'
 import { useSettings } from '@renderer/hooks/useSettings'
 import { TopicManager } from '@renderer/hooks/useTopic'
 import { fetchMessagesSummary } from '@renderer/services/ApiService'
+import { getDefaultTopic } from '@renderer/services/AssistantService'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
 import store from '@renderer/store'
 import { setGenerating } from '@renderer/store/runtime'
@@ -29,7 +30,7 @@ import styled from 'styled-components'
 
 interface Props {
   assistant: Assistant
-  activeTopic: Topic
+  activeTopic?: Topic
   setActiveTopic: (topic: Topic) => void
   className?: string
 }
@@ -70,11 +71,20 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic,
     [setActiveTopic]
   )
 
-  const onClearMessages = useCallback(() => {
-    window.keyv.set(EVENT_NAMES.CHAT_COMPLETION_PAUSED, true)
-    store.dispatch(setGenerating(false))
-    EventEmitter.emit(EVENT_NAMES.CLEAR_MESSAGES)
-  }, [])
+  const onClearMessages = useCallback(
+    async (topicId: string) => {
+      window.keyv.set(EVENT_NAMES.CHAT_COMPLETION_PAUSED, true)
+      store.dispatch(setGenerating(false))
+      await TopicManager.clearTopicMessages(topicId)
+      const defaultTopic = getDefaultTopic(assistant.id)
+      const topic = assistant.topics.find((t) => t.id === topicId)
+      if (topic) {
+        updateTopic({ ...topic, name: defaultTopic.name, messages: [] })
+      }
+      EventEmitter.emit(EVENT_NAMES.CLEAR_MESSAGES, topicId)
+    },
+    [assistant.id, assistant.topics, updateTopic]
+  )
 
   const getTopicMenuItems = useCallback(
     (topic: Topic) => {
@@ -116,7 +126,7 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic,
             window.modal.confirm({
               title: t('chat.input.clear.content'),
               centered: true,
-              onOk: onClearMessages
+              onOk: () => onClearMessages(topic.id)
             })
           }
         },
@@ -182,7 +192,7 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic,
     <Container right={topicPosition === 'right'} className={`topics-tab ${className || ''}`}>
       <DragableList list={assistant.topics} onUpdate={updateTopics}>
         {(topic) => {
-          const isActive = topic.id === activeTopic?.id
+          const isActive = activeTopic?.id === topic.id
           return (
             <Dropdown menu={{ items: getTopicMenuItems(topic) }} trigger={['contextMenu']} key={topic.id}>
               <TopicListItem
@@ -204,7 +214,7 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic,
                     onClick={(e) => {
                       e.stopPropagation()
                       if (assistant.topics.length === 1) {
-                        return onClearMessages()
+                        return onClearMessages(topic.id)
                       }
                       onDeleteTopic(topic)
                     }}>
@@ -270,7 +280,7 @@ const Container = styled(Scrollbar)<{ right?: boolean }>`
   flex-direction: column;
   padding-top: 11px;
   user-select: none;
-  max-height: ${(props) => (props.className?.includes('in-assistant') ? '300px' : 'auto')};
+  max-height: auto;
   overflow-y: auto;
   background: transparent;
   &.in-assistant {

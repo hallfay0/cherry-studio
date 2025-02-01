@@ -9,13 +9,13 @@ import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-interface WebviewElement extends HTMLElement {
-  src: string
-  allowpopups: string
-  partition: string
-  reload: () => void
-  loadURL: (url: string) => void
-}
+// interface WebviewElement extends HTMLElement {
+//   src: string
+//   allowpopups: string
+//   partition: string
+//   reload: () => void
+//   loadURL: (url: string) => void
+// }
 
 const TabsPage: FC = () => {
   const { t } = useTranslation()

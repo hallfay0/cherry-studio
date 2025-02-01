@@ -167,12 +167,17 @@ const Messages: FC<Props> = ({ assistant, topic, setActiveTopic }) => {
         lastUserMessage && onSendMessage({ ...lastUserMessage, id: uuid(), model: model, mentions: [model] })
       }),
       EventEmitter.on(EVENT_NAMES.AI_AUTO_RENAME, autoRenameTopic),
-      EventEmitter.on(EVENT_NAMES.CLEAR_MESSAGES, () => {
-        setMessages([])
-        setDisplayMessages([])
-        const defaultTopic = getDefaultTopic(assistant.id)
-        updateTopic({ ...topic, name: defaultTopic.name, messages: [] })
-        TopicManager.clearTopicMessages(topic.id)
+      EventEmitter.on(EVENT_NAMES.CLEAR_MESSAGES, async (topicId: string) => {
+        if (topic.id === topicId) {
+          setMessages([])
+          setDisplayMessages([])
+          const defaultTopic = getDefaultTopic(assistant.id)
+          updateTopic({ ...topic, name: defaultTopic.name, messages: [] })
+          await TopicManager.clearTopicMessages(topic.id)
+        }
+        // 重新加载消息列表
+        const messages = await TopicManager.getTopicMessages(topic.id)
+        setMessages(messages)
       }),
       EventEmitter.on(EVENT_NAMES.EXPORT_TOPIC_IMAGE, async () => {
         const imageData = await captureScrollableDiv(containerRef)

@@ -1,4 +1,4 @@
-import { BarsOutlined, SettingOutlined } from '@ant-design/icons'
+import { SettingOutlined } from '@ant-design/icons'
 import AddAssistantPopup from '@renderer/components/Popups/AddAssistantPopup'
 import { useAssistants, useDefaultAssistant } from '@renderer/hooks/useAssistant'
 import { useSettings } from '@renderer/hooks/useSettings'

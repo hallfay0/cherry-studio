@@ -1,4 +1,4 @@
-import { FormOutlined, SearchOutlined } from '@ant-design/icons'
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
 import { Navbar, NavbarLeft, NavbarRight } from '@renderer/components/app/Navbar'
 import { HStack } from '@renderer/components/Layout'
 import MinAppsPopover from '@renderer/components/Popups/MinAppsPopover'
@@ -22,9 +22,10 @@ interface Props {
   activeAssistant: Assistant
   activeTopic: Topic
   setActiveTopic: (topic: Topic) => void
+  onCreateAssistant: () => void
 }
 
-const HeaderNavbar: FC<Props> = ({ activeAssistant }) => {
+const HeaderNavbar: FC<Props> = ({ activeAssistant, onCreateAssistant }) => {
   const { assistant } = useAssistant(activeAssistant.id)
   const { showAssistants, toggleShowAssistants } = useShowAssistants()
   const { topicPosition, sidebarIcons, narrowMode } = useSettings()
@@ -54,8 +55,8 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant }) => {
           <NavbarIcon onClick={toggleShowAssistants} style={{ marginLeft: isMac ? 16 : 0 }}>
             <i className="iconfont icon-hide-sidebar" />
           </NavbarIcon>
-          <NavbarIcon onClick={() => EventEmitter.emit(EVENT_NAMES.ADD_NEW_TOPIC)}>
-            <FormOutlined />
+          <NavbarIcon onClick={onCreateAssistant}>
+            <PlusOutlined />
           </NavbarIcon>
         </NavbarLeft>
       )}

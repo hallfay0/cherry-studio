@@ -54,20 +54,20 @@ export class TopicManager {
       await deleteMessageFiles(message)
     }
 
-    db.topics.delete(id)
+    await db.topics.delete(id)
   }
 
   static async clearTopicMessages(id: string) {
     const topic = await this.getTopic(id)
 
     if (topic) {
+      // 先删除所有消息的文件
       for (const message of topic?.messages ?? []) {
         await deleteMessageFiles(message)
       }
 
-      topic.messages = []
-
-      await db.topics.update(id, topic)
+      // 更新数据库中的消息为空数组
+      await db.topics.put({ ...topic, messages: [] })
     }
   }
 }

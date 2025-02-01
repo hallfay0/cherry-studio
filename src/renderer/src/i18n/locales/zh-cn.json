@@ -61,6 +61,7 @@
       "artifacts.button.download": "下载",
       "artifacts.button.preview": "预览",
       "assistant.search.placeholder": "搜索",
+      "button.new_topic": "新话题",
       "default.description": "你好，我是默认助手。你可以立刻开始跟我聊天。",
       "default.name": "⭐️ 默认助手",
       "default.topic.name": "默认话题",

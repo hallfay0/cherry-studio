@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import Chat from './Chat'
 import Navbar from './Navbar'
 import HomeTabs from './Tabs'
+import AddAssistantPopup from '@renderer/components/Popups/AddAssistantPopup'
 
 let _activeAssistant: Assistant
 
@@ -25,6 +26,11 @@ const HomePage: FC = () => {
   const { showAssistants, showTopics, topicPosition } = useSettings()
 
   _activeAssistant = activeAssistant
+
+  const onCreateAssistant = async () => {
+    const assistant = await AddAssistantPopup.show()
+    assistant && setActiveAssistant(assistant)
+  }
 
   useEffect(() => {
     NavigationService.setNavigate(navigate)
@@ -46,7 +52,12 @@ const HomePage: FC = () => {
 
   return (
     <Container id="home-page">
-      <Navbar activeAssistant={activeAssistant} activeTopic={activeTopic} setActiveTopic={setActiveTopic} />
+      <Navbar
+        activeAssistant={activeAssistant}
+        activeTopic={activeTopic}
+        setActiveTopic={setActiveTopic}
+        onCreateAssistant={onCreateAssistant}
+      />
       <ContentContainer id="content-container">
         {showAssistants && (
           <HomeTabs
