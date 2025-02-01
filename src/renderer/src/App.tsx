@@ -22,6 +22,7 @@ import SettingsPage from './pages/settings/SettingsPage'
 import TranslatePage from './pages/translate/TranslatePage'
 import TabsPage from './pages/tabs/TabsPage'
 import NavigationService from './services/NavigationService'
+import WebviewContainer from './components/WebviewContainer'
 
 const AppRoutes: FC = () => {
   const navigate = useNavigate()
@@ -44,6 +45,7 @@ const AppRoutes: FC = () => {
         <Route path="/settings/*" element={<SettingsPage />} />
         <Route path="/tabs" element={<TabsPage />} />
       </Routes>
+      <WebviewContainer />
     </>
   )
 }
