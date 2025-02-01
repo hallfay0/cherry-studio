@@ -14,10 +14,12 @@ import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { useAppDispatch } from '@renderer/store'
+import { addTab, setActiveTab } from '@renderer/store/tabs'
+import { MinAppType } from '@renderer/types'
 
 import DragableList from '../DragableList'
 import MinAppIcon from '../Icons/MinAppIcon'
-import MinApp from '../MinApp'
 import UserPopup from '../Popups/UserPopup'
 
 const Sidebar: FC = () => {
@@ -51,7 +53,7 @@ const Sidebar: FC = () => {
       }}>
       <AvatarImg src={avatar || UserAvatar} draggable={false} className="nodrag" onClick={onEditUser} />
       <MainMenusContainer>
-        <Menus onClick={MinApp.onClose}>
+        <Menus>
           <MainMenus />
         </Menus>
         {showPinnedApps && (
@@ -63,7 +65,7 @@ const Sidebar: FC = () => {
           </AppsContainer>
         )}
       </MainMenusContainer>
-      <Menus onClick={MinApp.onClose}>
+      <Menus>
         <Tooltip title={t('settings.theme.title')} mouseEnterDelay={0.8} placement="right">
           <Icon onClick={() => toggleTheme()}>
             {theme === 'dark' ? (
@@ -131,6 +133,14 @@ const MainMenus: FC = () => {
 const PinnedApps: FC = () => {
   const { pinned, updatePinnedMinapps } = useMinapps()
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const handleMinAppClick = (app: MinAppType) => {
+    dispatch(addTab(app))
+    dispatch(setActiveTab(app.id!.toString()))
+    navigate('/tabs')
+  }
 
   return (
     <DragableList list={pinned} onUpdate={updatePinnedMinapps} listStyle={{ marginBottom: 5 }}>
@@ -149,7 +159,7 @@ const PinnedApps: FC = () => {
           <Tooltip key={app.id} title={app.name} mouseEnterDelay={0.8} placement="right">
             <StyledLink>
               <Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
-                <Icon onClick={() => MinApp.start(app)}>
+                <Icon onClick={() => handleMinAppClick(app)}>
                   <MinAppIcon size={20} app={app} style={{ borderRadius: 6 }} />
                 </Icon>
               </Dropdown>
