@@ -83,7 +83,7 @@ const TabsPage: FC = () => {
     <Container>
       <Navbar>
         <StyledNavbarCenter>
-          {t('minapp.title')}
+          {activeTab ? tabs.find((tab) => tab.id?.toString() === activeTab)?.name : t('minapp.title')}
           <ButtonsGroup>
             <Button onClick={handleHome} $disabled={!activeTab}>
               <HomeOutlined />
