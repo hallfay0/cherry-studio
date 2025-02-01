@@ -1,4 +1,11 @@
-import { DeleteOutlined, EditOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  CaretRightOutlined
+} from '@ant-design/icons'
 import DragableList from '@renderer/components/DragableList'
 import CopyIcon from '@renderer/components/Icons/CopyIcon'
 import Scrollbar from '@renderer/components/Scrollbar'
@@ -9,7 +16,7 @@ import { useSettings } from '@renderer/hooks/useSettings'
 import AssistantSettingsPopup from '@renderer/pages/settings/AssistantSettings'
 import { getDefaultTopic } from '@renderer/services/AssistantService'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
-import { Assistant } from '@renderer/types'
+import { Assistant, Topic } from '@renderer/types'
 import { uuid } from '@renderer/utils'
 import { Dropdown } from 'antd'
 import { ItemType } from 'antd/es/menu/interface'
@@ -17,22 +24,28 @@ import { last, omit } from 'lodash'
 import { FC, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import Topics from './TopicsTab'
 
 interface Props {
   activeAssistant: Assistant
+  activeTopic: Topic
   setActiveAssistant: (assistant: Assistant) => void
   onCreateDefaultAssistant: () => void
   onCreateAssistant: () => void
+  setActiveTopic: (topic: Topic) => void
 }
 
 const Assistants: FC<Props> = ({
   activeAssistant,
+  activeTopic,
   setActiveAssistant,
   onCreateAssistant,
-  onCreateDefaultAssistant
+  onCreateDefaultAssistant,
+  setActiveTopic
 }) => {
   const { assistants, removeAssistant, addAssistant, updateAssistants } = useAssistants()
   const [dragging, setDragging] = useState(false)
+  const [expandedAssistants, setExpandedAssistants] = useState<{ [key: string]: boolean }>({})
   const { removeAllTopics } = useAssistant(activeAssistant.id)
   const { clickAssistantToShowTopic, topicPosition } = useSettings()
   const { t } = useTranslation()
@@ -124,9 +137,18 @@ const Assistants: FC<Props> = ({
       }
 
       setActiveAssistant(assistant)
+      // 默认选中第一个话题
+      setActiveTopic(assistant.topics[0])
     },
     [clickAssistantToShowTopic, setActiveAssistant, topicPosition]
   )
+
+  const toggleAssistantExpand = (assistantId: string) => {
+    setExpandedAssistants((prev) => ({
+      ...prev,
+      [assistantId]: !prev[assistantId]
+    }))
+  }
 
   return (
     <Container className="assistants-tab">
@@ -137,18 +159,33 @@ const Assistants: FC<Props> = ({
         onDragStart={() => setDragging(true)}
         onDragEnd={() => setDragging(false)}>
         {(assistant) => {
-          const isCurrent = assistant.id === activeAssistant?.id
+          const isExpanded = expandedAssistants[assistant.id]
+          const isCurrentAssistant = assistant.id === activeAssistant.id
+          const isActive = isCurrentAssistant && !isExpanded
           return (
-            <Dropdown key={assistant.id} menu={{ items: getMenuItems(assistant) }} trigger={['contextMenu']}>
-              <AssistantItem onClick={() => onSwitchAssistant(assistant)} className={isCurrent ? 'active' : ''}>
-                <AssistantName className="name">{assistant.name || t('chat.default.name')}</AssistantName>
-                {isCurrent && (
-                  <MenuButton onClick={() => EventEmitter.emit(EVENT_NAMES.SWITCH_TOPIC_SIDEBAR)}>
-                    <TopicCount className="topics-count">{assistant.topics.length}</TopicCount>
-                  </MenuButton>
-                )}
-              </AssistantItem>
-            </Dropdown>
+            <div key={assistant.id}>
+              <Dropdown menu={{ items: getMenuItems(assistant) }} trigger={['contextMenu']}>
+                <AssistantItem onClick={() => toggleAssistantExpand(assistant.id)} className={isActive ? 'active' : ''}>
+                  <AssistantName className="name">{assistant.name || t('chat.default.name')}</AssistantName>
+                  <TopicCount className="topics-count">{assistant.topics.length}</TopicCount>
+                </AssistantItem>
+              </Dropdown>
+              {isExpanded && (
+                <TopicsContainer>
+                  <Topics
+                    assistant={assistant}
+                    activeTopic={activeAssistant.topics.find((t) => t.id === activeTopic?.id) || assistant.topics[0]}
+                    setActiveTopic={(topic) => {
+                      if (assistant.id !== activeAssistant.id) {
+                        setActiveAssistant(assistant)
+                      }
+                      setActiveTopic(topic)
+                    }}
+                    className="in-assistant"
+                  />
+                </TopicsContainer>
+              )}
+            </div>
           )
         }}
       </DragableList>
@@ -165,6 +202,7 @@ const Assistants: FC<Props> = ({
   )
 }
 
+//整个助手的容器
 const Container = styled(Scrollbar)`
   display: flex;
   flex-direction: column;
@@ -172,66 +210,56 @@ const Container = styled(Scrollbar)`
   user-select: none;
 `
 
+//单个助手
 const AssistantItem = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 7px 12px;
-  position: relative;
+  align-items: center;
+  padding: 8px 12px;
   margin: 0 10px;
-  padding-right: 35px;
-  font-family: Ubuntu;
   border-radius: var(--list-item-border-radius);
-  border: 0.5px solid transparent;
+  font-family: Ubuntu;
+  font-size: 13px;
+  position: relative;
   cursor: pointer;
-  .iconfont {
-    opacity: 0;
-    color: var(--color-text-3);
-  }
+  border: 0.5px solid var(--color-border);
   &:hover {
     background-color: var(--color-background-soft);
   }
   &.active {
     background-color: var(--color-background-soft);
     border: 0.5px solid var(--color-border);
-    .name {
-    }
   }
 `
 
 const AssistantName = styled.div`
-  color: var(--color-text);
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 13px;
-`
-
-const MenuButton = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  min-width: 22px;
-  height: 22px;
-  min-width: 22px;
-  min-height: 22px;
-  border-radius: 11px;
-  position: absolute;
-  background-color: var(--color-background);
-  right: 9px;
-  top: 6px;
+  font-size: 14px;
+  font-weight: 500;
 `
 
 const TopicCount = styled.div`
-  color: var(--color-text);
-  font-size: 10px;
-  border-radius: 10px;
+  color: var(--color-text-3);
+  font-size: 11px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  background-color: var(--color-background);
+  padding: 0 6px;
+  border: 0.5px solid var(--color-border);
+`
+
+const TopicsContainer = styled.div`
+  margin-bottom: -21px;
+  margin-top: 0px;
 `
 
 export default Assistants

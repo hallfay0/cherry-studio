@@ -4,7 +4,8 @@ import {
   DeleteOutlined,
   EditOutlined,
   FolderOutlined,
-  UploadOutlined
+  UploadOutlined,
+  MessageOutlined
 } from '@ant-design/icons'
 import DragableList from '@renderer/components/DragableList'
 import PromptPopup from '@renderer/components/Popups/PromptPopup'
@@ -30,15 +31,16 @@ interface Props {
   assistant: Assistant
   activeTopic: Topic
   setActiveTopic: (topic: Topic) => void
+  className?: string
 }
 
-const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic }) => {
+const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic, className }) => {
   const { assistants } = useAssistants()
   const { assistant, removeTopic, moveTopic, updateTopic, updateTopics } = useAssistant(_assistant.id)
   const { t } = useTranslation()
   const { showTopicTime, topicPosition } = useSettings()
 
-  const borderRadius = showTopicTime ? 12 : 'var(--list-item-border-radius)'
+  const borderRadius = 10
 
   const onDeleteTopic = useCallback(
     async (topic: Topic) => {
@@ -177,7 +179,7 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic 
   )
 
   return (
-    <Container right={topicPosition === 'right'} className="topics-tab">
+    <Container right={topicPosition === 'right'} className={`topics-tab ${className || ''}`}>
       <DragableList list={assistant.topics} onUpdate={updateTopics}>
         {(topic) => {
           const isActive = topic.id === activeTopic?.id
@@ -187,7 +189,12 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic 
                 className={isActive ? 'active' : ''}
                 onClick={() => onSwitchTopic(topic)}
                 style={{ borderRadius }}>
-                <TopicName className="name">{topic.name.replace('`', '')}</TopicName>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <MessageIcon>
+                    <MessageOutlined />
+                  </MessageIcon>
+                  <TopicName className="name">{topic.name.replace('`', '')}</TopicName>
+                </div>
                 {showTopicTime && (
                   <TopicTime className="time">{dayjs(topic.createdAt).format('MM/DD HH:mm')}</TopicTime>
                 )}
@@ -214,48 +221,75 @@ const Topics: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic 
   )
 }
 
-const Container = styled(Scrollbar)`
+const MessageIcon = styled.div`
   display: flex;
-  flex-direction: column;
-  padding-top: 11px;
-  user-select: none;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  color: var(--color-text-3);
+  font-size: 14px;
+  transition: color 0.3s ease;
+  .anticon {
+    font-size: 14px;
+  }
 `
 
+//单个话题
 const TopicListItem = styled.div`
-  padding: 7px 12px;
-  margin-left: 10px;
-  margin-right: 4px;
-  border-radius: var(--list-item-border-radius);
   font-family: Ubuntu;
   font-size: 13px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  font-family: Ubuntu;
   cursor: pointer;
   border: 0.5px solid transparent;
+  padding: 5px 10px;
   .menu {
-    opacity: 0;
-    color: var(--color-text-3);
+    opacity: 1;
+    color: var(--color-text-2);
   }
   &:hover {
     background-color: var(--color-background-soft);
-    .name {
-    }
   }
   &.active {
     background-color: var(--color-background-soft);
     border: 0.5px solid var(--color-border);
-    .name {
-    }
     .menu {
       opacity: 1;
-      background-color: var(--color-background-soft);
       &:hover {
         color: var(--color-text-2);
       }
     }
+  }
+`
+
+//话题列表
+const Container = styled(Scrollbar)<{ right?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  padding-top: 11px;
+  user-select: none;
+  max-height: ${(props) => (props.className?.includes('in-assistant') ? '300px' : 'auto')};
+  overflow-y: auto;
+  background: transparent;
+  &.in-assistant {
+    padding-top: 5px;
+    padding-bottom: 0;
+
+    ${TopicListItem} {
+      margin-left: 20px;
+      margin-right: 20px;
+      padding-right: 25px;
+    }
+
+    & > div:last-child {
+      min-height: 0;
+    }
+  }
+
+  .topics-tab {
+    background: transparent;
   }
 `
 

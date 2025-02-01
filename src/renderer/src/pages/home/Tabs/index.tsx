@@ -13,7 +13,6 @@ import styled from 'styled-components'
 
 import Assistants from './AssistantsTab'
 import Settings from './SettingsTab'
-import Topics from './TopicsTab'
 
 interface Props {
   activeAssistant: Assistant
@@ -23,13 +22,13 @@ interface Props {
   position: 'left' | 'right'
 }
 
-type Tab = 'assistants' | 'topic' | 'settings'
+type Tab = 'assistants' | 'settings'
 
 let _tab: any = ''
 
 const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant, setActiveTopic, position }) => {
   const { addAssistant } = useAssistants()
-  const [tab, setTab] = useState<Tab>(position === 'left' ? _tab || 'assistants' : 'topic')
+  const [tab, setTab] = useState<Tab>(position === 'left' ? _tab || 'assistants' : 'assistants')
   const { topicPosition } = useSettings()
   const { defaultAssistant } = useDefaultAssistant()
   const { toggleShowTopics } = useShowTopics()
@@ -68,30 +67,12 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
       EventEmitter.on(EVENT_NAMES.SHOW_ASSISTANTS, (): any => {
         showTab && setTab('assistants')
       }),
-      EventEmitter.on(EVENT_NAMES.SHOW_TOPIC_SIDEBAR, (): any => {
-        showTab && setTab('topic')
-      }),
       EventEmitter.on(EVENT_NAMES.SHOW_CHAT_SETTINGS, (): any => {
         showTab && setTab('settings')
-      }),
-      EventEmitter.on(EVENT_NAMES.SWITCH_TOPIC_SIDEBAR, () => {
-        showTab && setTab('topic')
-        if (position === 'left' && topicPosition === 'right') {
-          toggleShowTopics()
-        }
       })
     ]
     return () => unsubscribes.forEach((unsub) => unsub())
   }, [position, showTab, tab, toggleShowTopics, topicPosition])
-
-  useEffect(() => {
-    if (position === 'right' && topicPosition === 'right' && tab === 'assistants') {
-      setTab('topic')
-    }
-    if (position === 'left' && topicPosition === 'right' && tab !== 'assistants') {
-      setTab('assistants')
-    }
-  }, [position, tab, topicPosition])
 
   return (
     <Container style={border} className="home-tabs">
@@ -110,18 +91,13 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
             [
               position === 'left' && topicPosition === 'left' ? assistantTab : undefined,
               {
-                label: t('common.topics'),
-                value: 'topic',
-                icon: <BarsOutlined />
-              },
-              {
                 label: t('settings.title'),
                 value: 'settings',
                 icon: <SettingOutlined />
               }
             ].filter(Boolean) as SegmentedProps['options']
           }
-          onChange={(value) => setTab(value as 'topic' | 'settings')}
+          onChange={(value) => setTab(value as 'assistants' | 'settings')}
           block
         />
       )}
@@ -129,13 +105,12 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
         {tab === 'assistants' && (
           <Assistants
             activeAssistant={activeAssistant}
+            activeTopic={activeTopic}
             setActiveAssistant={setActiveAssistant}
             onCreateAssistant={onCreateAssistant}
             onCreateDefaultAssistant={onCreateDefaultAssistant}
+            setActiveTopic={setActiveTopic}
           />
-        )}
-        {tab === 'topic' && (
-          <Topics assistant={activeAssistant} activeTopic={activeTopic} setActiveTopic={setActiveTopic} />
         )}
         {tab === 'settings' && <Settings assistant={activeAssistant} />}
       </TabContent>
