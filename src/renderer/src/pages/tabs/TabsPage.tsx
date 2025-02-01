@@ -1,4 +1,4 @@
-import { CloseOutlined, ExportOutlined, PushpinOutlined, ReloadOutlined } from '@ant-design/icons'
+import { CloseOutlined, ExportOutlined, HomeOutlined, PushpinOutlined, ReloadOutlined } from '@ant-design/icons'
 import { Navbar, NavbarCenter } from '@renderer/components/app/Navbar'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import { useAppDispatch, useAppSelector } from '@renderer/store'
@@ -8,6 +8,14 @@ import { Tabs } from 'antd'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
+interface WebviewElement extends HTMLElement {
+  src: string
+  allowpopups: string
+  partition: string
+  reload: () => void
+  loadURL: (url: string) => void
+}
 
 const TabsPage: FC = () => {
   const { t } = useTranslation()
@@ -52,6 +60,13 @@ const TabsPage: FC = () => {
     updatePinnedMinapps(newPinned)
   }
 
+  const handleHome = () => {
+    const currentTab = tabs.find((tab) => tab.id?.toString() === activeTab)
+    if (currentTab) {
+      window.dispatchEvent(new CustomEvent('home-webview', { detail: { tabId: activeTab, url: currentTab.url } }))
+    }
+  }
+
   const items = tabs.map((tab) => {
     return {
       key: tab.id!.toString(),
@@ -70,6 +85,9 @@ const TabsPage: FC = () => {
         <StyledNavbarCenter>
           {t('minapp.title')}
           <ButtonsGroup>
+            <Button onClick={handleHome} $disabled={!activeTab}>
+              <HomeOutlined />
+            </Button>
             <Button onClick={handleReload} $disabled={!activeTab}>
               <ReloadOutlined />
             </Button>
@@ -153,11 +171,6 @@ const TabsContainer = styled.div`
       }
     }
   }
-`
-
-const WebviewContainer = styled.div`
-  height: 100%;
-  background: white;
 `
 
 const TabLabel = styled.div`

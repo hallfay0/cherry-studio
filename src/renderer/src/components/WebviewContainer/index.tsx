@@ -29,9 +29,20 @@ const WebviewContainer: FC = () => {
       }
     }
 
+    const handleHome = (event: CustomEvent) => {
+      const { tabId, url } = event.detail
+      const webview = webviewRefs.current[tabId]
+      if (webview) {
+        webview.loadURL(url)
+      }
+    }
+
     window.addEventListener('reload-webview', handleReload as EventListener)
+    window.addEventListener('home-webview', handleHome as EventListener)
+
     return () => {
       window.removeEventListener('reload-webview', handleReload as EventListener)
+      window.removeEventListener('home-webview', handleHome as EventListener)
     }
   }, [])
 
