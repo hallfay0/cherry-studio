@@ -1,13 +1,14 @@
 import MinAppIcon from '@renderer/components/Icons/MinAppIcon'
-import MinApp from '@renderer/components/MinApp'
+// import MinApp from '@renderer/components/MinApp'
 import { useMinapps } from '@renderer/hooks/useMinapps'
 import { MinAppType } from '@renderer/types'
-import type { MenuProps } from 'antd'
-import { Dropdown } from 'antd'
+import { Dropdown, MenuProps } from 'antd'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '@renderer/store'
+import { addTab, setActiveTab } from '@renderer/store/tabs'
 
 interface Props {
   app: MinAppType
@@ -18,6 +19,7 @@ interface Props {
 const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const {
     minapps,
     pinned,
@@ -31,7 +33,9 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   const isCustomApp = Boolean(app.id?.toString().startsWith('custom_'))
 
   const handleClick = () => {
-    MinApp.start(app)
+    dispatch(addTab(app))
+    dispatch(setActiveTab(app.id!.toString()))
+    navigate('/tabs')
     onClick?.()
   }
 
@@ -40,7 +44,6 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
     const newDisabled = [...disabledMinapps, app]
     updateMinapps(newVisible)
     updateDisabledMinapps(newDisabled)
-    // 如果应用已固定，也需要从固定列表中移除
     if (isPinned) {
       const updatedPinned = pinned.filter((item) => item.id !== app.id)
       updatePinnedMinapps(updatedPinned)
@@ -57,7 +60,6 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
   const handleDeleteApp = () => {
     const updatedApps = minapps.filter((item) => item.id !== app.id)
     updateMinapps(updatedApps)
-    // 如果应用已固定，也需要从固定列表中移除
     if (isPinned) {
       const updatedPinned = pinned.filter((item) => item.id !== app.id)
       updatePinnedMinapps(updatedPinned)
@@ -69,7 +71,6 @@ const App: FC<Props> = ({ app, onClick, size = 60 }) => {
       key: 'togglePin',
       label: isPinned ? t('minapp.sidebar.remove.title') : t('minapp.sidebar.add.title'),
       onClick: () => {
-        console.debug('togglePin', app)
         const newPinned = isPinned ? pinned.filter((item) => item.id !== app.id) : [...(pinned || []), app]
         updatePinnedMinapps(newPinned)
       }

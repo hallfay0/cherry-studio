@@ -13,6 +13,21 @@ import paintings from './paintings'
 import runtime from './runtime'
 import settings from './settings'
 import shortcuts from './shortcuts'
+import tabs from './tabs'
+import type { TabsState } from './tabs'
+
+export interface RootState {
+  assistants: any
+  agents: any
+  paintings: any
+  llm: any
+  settings: any
+  runtime: any
+  shortcuts: any
+  knowledge: any
+  minapps: any
+  tabs: TabsState
+}
 
 const rootReducer = combineReducers({
   assistants,
@@ -23,7 +38,8 @@ const rootReducer = combineReducers({
   runtime,
   shortcuts,
   knowledge,
-  minapps
+  minapps,
+  tabs
 })
 
 const persistedReducer = persistReducer(
@@ -38,8 +54,7 @@ const persistedReducer = persistReducer(
 )
 
 const store = configureStore({
-  // @ts-ignore store type is unknown
-  reducer: persistedReducer as typeof rootReducer,
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
       serializableCheck: {
@@ -50,7 +65,6 @@ const store = configureStore({
   devTools: true
 })
 
-export type RootState = ReturnType<typeof rootReducer>
 export type AppDispatch = typeof store.dispatch
 
 export const persistor = persistStore(store)

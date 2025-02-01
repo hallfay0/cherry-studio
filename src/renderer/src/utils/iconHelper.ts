@@ -1,4 +1,4 @@
-import { IconSourceType, MinAppIcon } from '@renderer/types'
+import { MinAppIcon } from '@renderer/types'
 
 export const IconHelper = {
   // 统一的图标获取方法
