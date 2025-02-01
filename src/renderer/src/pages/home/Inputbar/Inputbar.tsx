@@ -46,6 +46,7 @@ import TokenCount from './TokenCount'
 
 interface Props {
   assistant: Assistant
+  activeTopic: Topic
   setActiveTopic: (topic: Topic) => void
 }
 
@@ -53,7 +54,7 @@ let _text = ''
 let _files: FileType[] = []
 let _base: KnowledgeBase | undefined
 
-const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic }) => {
+const Inputbar: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopic }) => {
   const [text, setText] = useState(_text)
   const [inputFocus, setInputFocus] = useState(false)
   const { assistant, addTopic, model, setModel, updateAssistant } = useAssistant(_assistant.id)
@@ -239,9 +240,10 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, setActiveTopic }) => {
   const clearTopic = async () => {
     if (generating) {
       onPause()
-      await delay(1)
+      await delay(500)
     }
-    EventEmitter.emit(EVENT_NAMES.CLEAR_MESSAGES)
+    await modelGenerating()
+    EventEmitter.emit(EVENT_NAMES.CLEAR_MESSAGES, activeTopic.id)
   }
 
   const onPause = () => {
