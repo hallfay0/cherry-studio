@@ -19,16 +19,24 @@ import type { MenuProps } from 'antd'
 import { Button, Dropdown, Menu } from 'antd'
 import dayjs from 'dayjs'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ContentView from './ContentView'
 
+// 使用全局变量来保存状态
+let _fileType: FileTypes | 'all' | 'gemini' = 'all'
+
 const FilesPage: FC = () => {
   const { t } = useTranslation()
-  const [fileType, setFileType] = useState<FileTypes | 'all' | 'gemini'>('all')
+  const [fileType, setFileType] = useState<FileTypes | 'all' | 'gemini'>(_fileType)
   const { providers } = useProviders()
+
+  // 保存状态到全局变量
+  useEffect(() => {
+    _fileType = fileType
+  }, [fileType])
 
   const geminiProviders = providers.filter((provider) => provider.type === 'gemini')
 
@@ -249,9 +257,7 @@ const SideNav = styled.div`
 
     &.ant-menu-item-selected {
       background-color: var(--color-background-soft);
-      color: var(--color-primary);
       border: 0.5px solid var(--color-border);
-      color: var(--color-text);
     }
   }
 `

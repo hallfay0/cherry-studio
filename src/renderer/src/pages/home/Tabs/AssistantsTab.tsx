@@ -19,7 +19,7 @@ import { uuid } from '@renderer/utils'
 import { Dropdown } from 'antd'
 import { ItemType } from 'antd/es/menu/interface'
 import { last, omit } from 'lodash'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -144,6 +144,9 @@ const ButtonAssistantItem = styled(AssistantItem)`
   }
 `
 
+// 使用全局变量来保存展开/收缩状态
+let _expandedAssistants: { [key: string]: boolean } = {}
+
 const Assistants: FC<Props> = ({
   activeAssistant,
   activeTopic,
@@ -154,9 +157,24 @@ const Assistants: FC<Props> = ({
 }) => {
   const { assistants, removeAssistant, addAssistant, updateAssistants } = useAssistants()
   const [dragging, setDragging] = useState(false)
-  const [expandedAssistants, setExpandedAssistants] = useState<{ [key: string]: boolean }>({})
+  const [expandedAssistants, setExpandedAssistants] = useState<{ [key: string]: boolean }>(_expandedAssistants)
   const { t } = useTranslation()
   const { addAgent } = useAgents()
+
+  // 保存状态到全局变量
+  useEffect(() => {
+    _expandedAssistants = expandedAssistants
+  }, [expandedAssistants])
+
+  // 初始化时，如果当前助手没有展开状态，则默认展开
+  useEffect(() => {
+    if (activeAssistant && !_expandedAssistants[activeAssistant.id]) {
+      setExpandedAssistants((prev) => ({
+        ...prev,
+        [activeAssistant.id]: true
+      }))
+    }
+  }, [activeAssistant])
 
   const clearAssistantTopics = useCallback(
     (assistantId: string) => {

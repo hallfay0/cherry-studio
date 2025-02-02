@@ -4,7 +4,7 @@ import { useSettings } from '@renderer/hooks/useSettings'
 import { useActiveTopic } from '@renderer/hooks/useTopic'
 import NavigationService from '@renderer/services/NavigationService'
 import { Assistant } from '@renderer/types'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -12,25 +12,47 @@ import Chat from './Chat'
 import Navbar from './Navbar'
 import HomeTabs from './Tabs'
 
+// 使用全局变量来保存状态
+let _activeAssistant: Assistant | null = null
+let _activeTopic: any = null
+
 const HomePage: FC = () => {
   const { assistants } = useAssistants()
   const navigate = useNavigate()
-
   const location = useLocation()
   const state = location.state
-
   const { assistant, topic } = location?.state || {}
-  const [activeAssistant, setActiveAssistant] = useState<Assistant>(assistant || assistants[0])
-  const { activeTopic, setActiveTopic } = useActiveTopic(activeAssistant, topic)
+
+  // 使用 ref 来跟踪组件是否已经初始化
+  const isInitialized = useRef(false)
+
+  const [activeAssistant, setActiveAssistant] = useState<Assistant>(() => {
+    return _activeAssistant || assistant || assistants[0]
+  })
+
+  const { activeTopic, setActiveTopic } = useActiveTopic(activeAssistant, _activeTopic || topic)
   const { showAssistants, showRightSidebar } = useSettings()
+
+  // 保存状态到全局变量
+  useEffect(() => {
+    _activeAssistant = activeAssistant
+  }, [activeAssistant])
+
+  useEffect(() => {
+    _activeTopic = activeTopic
+  }, [activeTopic])
 
   useEffect(() => {
     NavigationService.setNavigate(navigate)
   }, [navigate])
 
   useEffect(() => {
-    state?.assistant && setActiveAssistant(state?.assistant)
-    state?.topic && setActiveTopic(state?.topic)
+    // 只在组件第一次挂载时处理 state
+    if (!isInitialized.current && state) {
+      state?.assistant && setActiveAssistant(state?.assistant)
+      state?.topic && setActiveTopic(state?.topic)
+      isInitialized.current = true
+    }
   }, [state])
 
   useEffect(() => {

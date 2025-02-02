@@ -6,7 +6,7 @@ import { Agent } from '@renderer/types'
 import { uuid } from '@renderer/utils'
 import { Col, Empty, Input, Row, Tabs as TabsAntd, Typography } from 'antd'
 import { groupBy, omit } from 'lodash'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
@@ -18,12 +18,30 @@ import MyAgents from './components/MyAgents'
 
 const { Title } = Typography
 
+// 使用全局变量来保存状态
 let _agentGroups: Record<string, Agent[]> = {}
+let _search = ''
+let _searchInput = ''
+let _activeTabKey = '1'
 
 const AgentsPage: FC = () => {
-  const [search, setSearch] = useState('')
-  const [searchInput, setSearchInput] = useState('')
+  const [search, setSearch] = useState(_search)
+  const [searchInput, setSearchInput] = useState(_searchInput)
+  const [activeTabKey, setActiveTabKey] = useState(_activeTabKey)
   const systemAgents = useSystemAgents()
+
+  // 保存状态到全局变量
+  useEffect(() => {
+    _search = search
+  }, [search])
+
+  useEffect(() => {
+    _searchInput = searchInput
+  }, [searchInput])
+
+  useEffect(() => {
+    _activeTabKey = activeTabKey
+  }, [activeTabKey])
 
   const agentGroups = useMemo(() => {
     if (Object.keys(_agentGroups).length === 0) {
@@ -187,7 +205,14 @@ const AgentsPage: FC = () => {
             search.trim() ? (
               <TabContent>{renderAgentList(Object.values(filteredAgentGroups).flat())}</TabContent>
             ) : (
-              <Tabs tabPosition="right" animated={false} items={tabItems} $language={i18n.language} />
+              <Tabs
+                tabPosition="right"
+                animated={false}
+                items={tabItems}
+                $language={i18n.language}
+                activeKey={activeTabKey}
+                onChange={(key) => setActiveTabKey(key)}
+              />
             )
           ) : (
             <EmptyView>
