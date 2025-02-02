@@ -551,7 +551,9 @@
       "topic.position.left": "左侧",
       "topic.position.right": "右侧",
       "topic.show.time": "显示话题时间",
-      "tray.title": "启用系统托盘图标"
+      "tray.title": "启用系统托盘图标",
+      "display.right_sidebar.title": "右侧边栏设置",
+      "display.right_sidebar.enable": "开启右侧边栏"
     },
     "translate": {
       "any.language": "任意语言",

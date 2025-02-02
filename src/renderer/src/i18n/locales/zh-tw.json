@@ -433,6 +433,8 @@
       "display.sidebar.files.icon": "顯示文件圖示",
       "display.sidebar.title": "側邊欄設定",
       "display.topic.title": "話題設定",
+      "display.right_sidebar.title": "右側邊欄設定",
+      "display.right_sidebar.enable": "開啟右側邊欄",
       "display.sidebar.chat.hiddenMessage": "助手是基礎功能，不支援隱藏",
       "display.sidebar.empty": "把要隱藏的功能從左側拖拽到這裡",
       "display.sidebar.visible": "顯示的圖標",

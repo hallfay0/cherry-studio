@@ -27,12 +27,12 @@ const DisplaySettings: FC = () => {
     theme,
     windowStyle,
     setWindowStyle,
-    topicPosition,
-    setTopicPosition,
     clickAssistantToShowTopic,
     showTopicTime,
     customCss,
-    sidebarIcons
+    sidebarIcons,
+    enableRightSidebar,
+    setEnableRightSidebar
   } = useSettings()
   const { minapps, disabled, updateMinapps, updateDisabledMinapps } = useMinapps()
   const { theme: themeMode } = useTheme()
@@ -94,33 +94,24 @@ const DisplaySettings: FC = () => {
         )}
       </SettingGroup>
       <SettingGroup theme={theme}>
+        <SettingTitle>{t('settings.display.right_sidebar.title')}</SettingTitle>
+        <SettingDivider />
+        <SettingRow>
+          <SettingRowTitle>{t('settings.display.right_sidebar.enable')}</SettingRowTitle>
+          <Switch checked={enableRightSidebar} onChange={setEnableRightSidebar} />
+        </SettingRow>
+      </SettingGroup>
+      <SettingGroup theme={theme}>
         <SettingTitle>{t('settings.display.topic.title')}</SettingTitle>
         <SettingDivider />
         <SettingRow>
-          <SettingRowTitle>{t('settings.topic.position')}</SettingRowTitle>
-          <Select
-            value={topicPosition || 'right'}
-            style={{ width: 120 }}
-            onChange={setTopicPosition}
-            options={[
-              { value: 'left', label: t('settings.topic.position.left') },
-              { value: 'right', label: t('settings.topic.position.right') }
-            ]}
+          <SettingRowTitle>{t('settings.advanced.auto_switch_to_topics')}</SettingRowTitle>
+          <Switch
+            checked={clickAssistantToShowTopic}
+            onChange={(checked) => dispatch(setClickAssistantToShowTopic(checked))}
           />
         </SettingRow>
         <SettingDivider />
-        {topicPosition === 'left' && (
-          <>
-            <SettingRow>
-              <SettingRowTitle>{t('settings.advanced.auto_switch_to_topics')}</SettingRowTitle>
-              <Switch
-                checked={clickAssistantToShowTopic}
-                onChange={(checked) => dispatch(setClickAssistantToShowTopic(checked))}
-              />
-            </SettingRow>
-            <SettingDivider />
-          </>
-        )}
         <SettingRow>
           <SettingRowTitle>{t('settings.topic.show.time')}</SettingRowTitle>
           <Switch checked={showTopicTime} onChange={(checked) => dispatch(setShowTopicTime(checked))} />

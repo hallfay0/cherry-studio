@@ -1,11 +1,11 @@
 import store, { useAppDispatch, useAppSelector } from '@renderer/store'
 import {
   SendMessageShortcut,
+  setEnableRightSidebar as _setEnableRightSidebar,
   setSendMessageShortcut as _setSendMessageShortcut,
   setSidebarIcons,
   setTheme,
   SettingsState,
-  setTopicPosition,
   setTray,
   setWindowStyle
 } from '@renderer/store/settings'
@@ -30,8 +30,8 @@ export function useSettings() {
     setWindowStyle(windowStyle: 'transparent' | 'opaque') {
       dispatch(setWindowStyle(windowStyle))
     },
-    setTopicPosition(topicPosition: 'left' | 'right') {
-      dispatch(setTopicPosition(topicPosition))
+    setEnableRightSidebar(enable: boolean) {
+      dispatch(_setEnableRightSidebar(enable))
     },
     updateSidebarIcons(icons: { visible: SidebarIcon[]; disabled: SidebarIcon[] }) {
       dispatch(setSidebarIcons(icons))

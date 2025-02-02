@@ -403,19 +403,6 @@
         "use_shortcut_to_show": "トレイアイコンを右クリックするか、ショートカットキーで起動できます"
       },
       "display.title": "表示設定",
-      "font_size.title": "メッセージのフォントサイズ",
-      "general": "一般設定",
-      "general.backup.button": "バックアップ",
-      "general.backup.title": "データのバックアップと復元",
-      "general.manually_check_update.title": "更新チェックを無効にする",
-      "general.reset.button": "リセット",
-      "general.reset.title": "データをリセット",
-      "general.restore.button": "復元",
-      "general.title": "一般設定",
-      "general.user_name": "ユーザー名",
-      "general.user_name.placeholder": "ユーザー名を入力",
-      "general.view_webdav_settings": "WebDAV設定を表示",
-      "general.display.title": "表示設定",
       "display.sidebar.translate.icon": "翻訳のアイコンを表示",
       "display.sidebar.painting.icon": "絵画のアイコンを表示",
       "display.sidebar.minapp.icon": "ミニアプリのアイコンを表示",
@@ -540,7 +527,9 @@
       "topic.position.left": "左",
       "topic.position.right": "右",
       "topic.show.time": "トピックの時間を表示",
-      "tray.title": "システムトレイアイコンを有効にする"
+      "tray.title": "システムトレイアイコンを有効にする",
+      "display.right_sidebar.title": "右サイドバー設定",
+      "display.right_sidebar.enable": "右サイドバーを有効にする"
     },
     "translate": {
       "any.language": "任意の言語",

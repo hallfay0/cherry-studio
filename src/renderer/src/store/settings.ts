@@ -31,7 +31,6 @@ export interface SettingsState {
   theme: ThemeMode
   windowStyle: 'transparent' | 'opaque'
   fontSize: number
-  topicPosition: 'left' | 'right'
   showTopicTime: boolean
   pasteLongTextAsFile: boolean
   pasteLongTextThreshold: number
@@ -64,6 +63,8 @@ export interface SettingsState {
   enableQuickAssistant: boolean
   clickTrayToShowQuickAssistant: boolean
   multiModelMessageStyle: MultiModelMessageStyle
+  enableRightSidebar: boolean
+  showRightSidebar: boolean
 }
 
 export type MultiModelMessageStyle = 'horizontal' | 'vertical' | 'fold'
@@ -83,7 +84,6 @@ const initialState: SettingsState = {
   theme: ThemeMode.auto,
   windowStyle: 'transparent',
   fontSize: 14,
-  topicPosition: 'left',
   showTopicTime: false,
   pasteLongTextAsFile: false,
   pasteLongTextThreshold: 1500,
@@ -113,7 +113,9 @@ const initialState: SettingsState = {
   narrowMode: false,
   enableQuickAssistant: false,
   clickTrayToShowQuickAssistant: false,
-  multiModelMessageStyle: 'fold'
+  multiModelMessageStyle: 'fold',
+  enableRightSidebar: true,
+  showRightSidebar: true
 }
 
 const settingsSlice = createSlice({
@@ -169,9 +171,6 @@ const settingsSlice = createSlice({
     setWindowStyle: (state, action: PayloadAction<'transparent' | 'opaque'>) => {
       state.windowStyle = action.payload
       console.log(state.windowStyle)
-    },
-    setTopicPosition: (state, action: PayloadAction<'left' | 'right'>) => {
-      state.topicPosition = action.payload
     },
     setShowTopicTime: (state, action: PayloadAction<boolean>) => {
       state.showTopicTime = action.payload
@@ -250,14 +249,30 @@ const settingsSlice = createSlice({
     setNarrowMode: (state, action: PayloadAction<boolean>) => {
       state.narrowMode = action.payload
     },
-    setClickTrayToShowQuickAssistant: (state, action: PayloadAction<boolean>) => {
-      state.clickTrayToShowQuickAssistant = action.payload
-    },
     setEnableQuickAssistant: (state, action: PayloadAction<boolean>) => {
       state.enableQuickAssistant = action.payload
     },
-    setMultiModelMessageStyle: (state, action: PayloadAction<'horizontal' | 'vertical' | 'fold'>) => {
+    setClickTrayToShowQuickAssistant: (state, action: PayloadAction<boolean>) => {
+      state.clickTrayToShowQuickAssistant = action.payload
+    },
+    setMultiModelMessageStyle: (state, action: PayloadAction<MultiModelMessageStyle>) => {
       state.multiModelMessageStyle = action.payload
+    },
+    setEnableRightSidebar: (state, action: PayloadAction<boolean>) => {
+      state.enableRightSidebar = action.payload
+      if (!action.payload) {
+        state.showRightSidebar = false
+      }
+    },
+    setShowRightSidebar: (state, action: PayloadAction<boolean>) => {
+      if (state.enableRightSidebar) {
+        state.showRightSidebar = action.payload
+      }
+    },
+    toggleShowRightSidebar: (state) => {
+      if (state.enableRightSidebar) {
+        state.showRightSidebar = !state.showRightSidebar
+      }
     }
   }
 })
@@ -279,7 +294,6 @@ export const {
   setTheme,
   setFontSize,
   setWindowStyle,
-  setTopicPosition,
   setShowTopicTime,
   setPasteLongTextAsFile,
   setRenderInputMessageAsMarkdown,
@@ -304,9 +318,12 @@ export const {
   setTopicNamingPrompt,
   setSidebarIcons,
   setNarrowMode,
-  setClickTrayToShowQuickAssistant,
   setEnableQuickAssistant,
-  setMultiModelMessageStyle
+  setClickTrayToShowQuickAssistant,
+  setMultiModelMessageStyle,
+  setEnableRightSidebar,
+  setShowRightSidebar,
+  toggleShowRightSidebar
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

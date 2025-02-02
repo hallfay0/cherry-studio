@@ -1,3 +1,4 @@
+import AddAssistantPopup from '@renderer/components/Popups/AddAssistantPopup'
 import { useAssistants } from '@renderer/hooks/useAssistant'
 import { useSettings } from '@renderer/hooks/useSettings'
 import { useActiveTopic } from '@renderer/hooks/useTopic'
@@ -10,9 +11,6 @@ import styled from 'styled-components'
 import Chat from './Chat'
 import Navbar from './Navbar'
 import HomeTabs from './Tabs'
-import AddAssistantPopup from '@renderer/components/Popups/AddAssistantPopup'
-
-let _activeAssistant: Assistant
 
 const HomePage: FC = () => {
   const { assistants } = useAssistants()
@@ -21,16 +19,10 @@ const HomePage: FC = () => {
   const location = useLocation()
   const state = location.state
 
-  const [activeAssistant, setActiveAssistant] = useState(state?.assistant || _activeAssistant || assistants[0])
-  const { activeTopic, setActiveTopic } = useActiveTopic(activeAssistant, state?.topic)
-  const { showAssistants, showTopics, topicPosition } = useSettings()
-
-  _activeAssistant = activeAssistant
-
-  const onCreateAssistant = async () => {
-    const assistant = await AddAssistantPopup.show()
-    assistant && setActiveAssistant(assistant)
-  }
+  const { assistant, topic } = location?.state || {}
+  const [activeAssistant, setActiveAssistant] = useState<Assistant>(assistant || assistants[0])
+  const { activeTopic, setActiveTopic } = useActiveTopic(activeAssistant, topic)
+  const { showAssistants, showRightSidebar } = useSettings()
 
   useEffect(() => {
     NavigationService.setNavigate(navigate)
@@ -42,22 +34,24 @@ const HomePage: FC = () => {
   }, [state])
 
   useEffect(() => {
-    const canMinimize = topicPosition == 'left' ? !showAssistants : !showAssistants && !showTopics
+    const canMinimize = !showAssistants && !showRightSidebar
     window.api.window.setMinimumSize(canMinimize ? 520 : 1080, 600)
 
     return () => {
       window.api.window.resetMinimumSize()
     }
-  }, [showAssistants, showTopics, topicPosition])
+  }, [showAssistants, showRightSidebar])
+
+  const onCreateAssistant = async () => {
+    const assistant = await AddAssistantPopup.show()
+    if (assistant) {
+      setActiveAssistant(assistant)
+    }
+  }
 
   return (
     <Container id="home-page">
-      <Navbar
-        activeAssistant={activeAssistant}
-        activeTopic={activeTopic}
-        setActiveTopic={setActiveTopic}
-        onCreateAssistant={onCreateAssistant}
-      />
+      <Navbar activeAssistant={activeAssistant} onCreateAssistant={onCreateAssistant} />
       <ContentContainer id="content-container">
         {showAssistants && (
           <HomeTabs

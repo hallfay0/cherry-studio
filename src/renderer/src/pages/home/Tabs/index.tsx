@@ -6,7 +6,7 @@ import { useShowTopics } from '@renderer/hooks/useStore'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
 import { Assistant, Topic } from '@renderer/types'
 import { uuid } from '@renderer/utils'
-import { Segmented as AntSegmented, SegmentedProps } from 'antd'
+import { Segmented as AntSegmented } from 'antd'
 import { FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -28,10 +28,10 @@ let _tab: any = ''
 
 const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant, setActiveTopic, position }) => {
   const { addAssistant } = useAssistants()
-  const [tab, setTab] = useState<Tab>(position === 'left' ? _tab || 'assistants' : 'assistants')
-  const { topicPosition } = useSettings()
+  const [tab, setTab] = useState<Tab>(position === 'left' ? _tab || 'assistants' : 'settings')
   const { defaultAssistant } = useDefaultAssistant()
   const { toggleShowTopics } = useShowTopics()
+  const { enableRightSidebar } = useSettings()
 
   const { t } = useTranslation()
 
@@ -39,11 +39,39 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
   const border =
     position === 'left' ? { borderRight: borderStyle } : { borderLeft: borderStyle, borderTopLeftRadius: 0 }
 
-  if (position === 'left' && topicPosition === 'left') {
+  if (position === 'left') {
     _tab = tab
   }
 
-  const showTab = !(position === 'left' && topicPosition === 'right')
+  // 在开启侧边栏时：
+  // - 左侧固定显示助手列表
+  // - 右侧固定显示设置页面
+  // 在关闭侧边栏时：
+  // - 显示标签页切换组件
+  const showTabGroup = !enableRightSidebar
+  const forcedTab = position === 'right' ? 'settings' : enableRightSidebar ? 'assistants' : tab
+
+  // 添加调试日志
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     console.log(
+  //       JSON.stringify(
+  //         {
+  //           position,
+  //           showAssistants,
+  //           showTabGroup,
+  //           forcedTab,
+  //           tab,
+  //           enableRightSidebar
+  //         },
+  //         null,
+  //         2
+  //       )
+  //     )
+  //   }, 1000)
+
+  //   return () => clearInterval(timer)
+  // }, [position, showAssistants, showTabGroup, forcedTab, tab, enableRightSidebar])
 
   const assistantTab = {
     label: t('assistants.abbr'),
@@ -65,18 +93,18 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
   useEffect(() => {
     const unsubscribes = [
       EventEmitter.on(EVENT_NAMES.SHOW_ASSISTANTS, (): any => {
-        showTab && setTab('assistants')
+        !enableRightSidebar && setTab('assistants')
       }),
       EventEmitter.on(EVENT_NAMES.SHOW_CHAT_SETTINGS, (): any => {
-        showTab && setTab('settings')
+        !enableRightSidebar && setTab('settings')
       })
     ]
     return () => unsubscribes.forEach((unsub) => unsub())
-  }, [position, showTab, tab, toggleShowTopics, topicPosition])
+  }, [position, enableRightSidebar, tab, toggleShowTopics])
 
   return (
     <Container style={border} className="home-tabs">
-      {showTab && (
+      {position === 'left' && showTabGroup && (
         <Segmented
           value={tab}
           style={{
@@ -87,22 +115,20 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
             borderBottom: '0.5px solid var(--color-border)',
             gap: 2
           }}
-          options={
-            [
-              position === 'left' && topicPosition === 'left' ? assistantTab : undefined,
-              {
-                label: t('settings.title'),
-                value: 'settings',
-                icon: <SettingOutlined />
-              }
-            ].filter(Boolean) as SegmentedProps['options']
-          }
+          options={[
+            assistantTab,
+            {
+              label: t('settings.title'),
+              value: 'settings',
+              icon: <SettingOutlined />
+            }
+          ]}
           onChange={(value) => setTab(value as 'assistants' | 'settings')}
           block
         />
       )}
       <TabContent className="home-tabs-content">
-        <TabPane style={{ display: tab === 'assistants' ? 'flex' : 'none' }}>
+        <TabPane style={{ display: forcedTab === 'assistants' ? 'flex' : 'none' }}>
           <Assistants
             activeAssistant={activeAssistant}
             activeTopic={activeTopic}
@@ -112,7 +138,7 @@ const HomeTabs: FC<Props> = ({ activeAssistant, activeTopic, setActiveAssistant,
             setActiveTopic={setActiveTopic}
           />
         </TabPane>
-        <TabPane style={{ display: tab === 'settings' ? 'flex' : 'none' }}>
+        <TabPane style={{ display: forcedTab === 'settings' ? 'flex' : 'none' }}>
           <Settings assistant={activeAssistant} />
         </TabPane>
       </TabContent>

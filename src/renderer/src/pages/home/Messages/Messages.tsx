@@ -45,7 +45,7 @@ const Messages: FC<Props> = ({ assistant, topic, setActiveTopic }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef(messages)
   const { updateTopic, addTopic } = useAssistant(assistant.id)
-  const { showTopics, topicPosition, showAssistants, enableTopicNaming } = useSettings()
+  const { showAssistants, topicPosition, enableRightSidebar } = useSettings()
 
   const groupedMessages = getGroupedMessages(displayMessages)
 
@@ -55,11 +55,11 @@ const Messages: FC<Props> = ({ assistant, topic, setActiveTopic }) => {
   messagesRef.current = messages
 
   const maxWidth = useMemo(() => {
-    const showRightTopics = showTopics && topicPosition === 'right'
+    const showRightTopics = enableRightSidebar && topicPosition === 'right'
     const minusAssistantsWidth = showAssistants ? '- var(--assistants-width)' : ''
     const minusRightTopicsWidth = showRightTopics ? '- var(--assistants-width)' : ''
     return `calc(100vw - var(--sidebar-width) ${minusAssistantsWidth} ${minusRightTopicsWidth} - 5px)`
-  }, [showAssistants, showTopics, topicPosition])
+  }, [showAssistants, enableRightSidebar, topicPosition])
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => containerRef.current?.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'auto' }), 50)
@@ -108,7 +108,7 @@ const Messages: FC<Props> = ({ assistant, topic, setActiveTopic }) => {
     const _topic = getTopic(assistant, topic.id)
 
     // If the topic auto naming is not enabled, use the first message content as the topic name
-    if (!enableTopicNaming) {
+    if (!enableRightSidebar) {
       const topicName = messages[0].content.substring(0, 50)
       const data = { ..._topic, name: topicName } as Topic
       setActiveTopic(data)
@@ -125,7 +125,7 @@ const Messages: FC<Props> = ({ assistant, topic, setActiveTopic }) => {
         updateTopic(data)
       }
     }
-  }, [assistant, enableTopicNaming, messages, setActiveTopic, topic.id, updateTopic])
+  }, [assistant, enableRightSidebar, messages, setActiveTopic, topic.id, updateTopic])
 
   const onDeleteMessage = useCallback(
     async (message: Message) => {
@@ -290,6 +290,12 @@ const Messages: FC<Props> = ({ assistant, topic, setActiveTopic }) => {
       window.message.success(t('message.copy.success'))
     }
   })
+
+  useEffect(() => {
+    const showRightTopics = enableRightSidebar && topicPosition === 'right'
+    const width = showAssistants || showRightTopics ? 'calc(100vw - 300px)' : '100vw'
+    document.documentElement.style.setProperty('--chat-width', width)
+  }, [showAssistants, enableRightSidebar, topicPosition])
 
   return (
     <Container

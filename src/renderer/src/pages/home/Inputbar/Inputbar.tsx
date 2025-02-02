@@ -67,7 +67,10 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopi
     clickAssistantToShowTopic,
     language,
     autoTranslateWithSpace,
-    sidebarIcons
+    sidebarIcons,
+    topicPosition,
+    enableRightSidebar,
+    setEnableRightSidebar
   } = useSettings()
   const [expended, setExpend] = useState(false)
   const [estimateTokenCount, setEstimateTokenCount] = useState(0)
@@ -144,7 +147,22 @@ const Inputbar: FC<Props> = ({ assistant: _assistant, activeTopic, setActiveTopi
     setTimeout(() => resizeTextArea(), 0)
 
     setExpend(false)
-  }, [inputEmpty, text, assistant.id, assistant.topics, selectedKnowledgeBase, files, mentionModels])
+
+    if (topicPosition === 'right' && !enableRightSidebar) {
+      setEnableRightSidebar(true)
+    }
+  }, [
+    inputEmpty,
+    text,
+    assistant.id,
+    assistant.topics,
+    selectedKnowledgeBase,
+    files,
+    mentionModels,
+    topicPosition,
+    enableRightSidebar,
+    setEnableRightSidebar
+  ])
 
   const translate = async () => {
     if (isTranslating) {

@@ -889,6 +889,20 @@ const migrateConfig = {
       }
     })
     return state
+  },
+  '62': (state: RootState) => {
+    if (!state.settings.enableRightSidebar) {
+      state.settings.enableRightSidebar = true
+    }
+    return state
+  },
+  '63': (state: RootState) => {
+    const settings = { ...state.settings }
+    delete settings.topicPosition
+    return {
+      ...state,
+      settings
+    }
   }
 }
 

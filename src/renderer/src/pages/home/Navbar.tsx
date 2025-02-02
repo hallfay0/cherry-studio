@@ -1,18 +1,16 @@
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons'
-import { Navbar, NavbarLeft, NavbarRight } from '@renderer/components/app/Navbar'
+import { SearchOutlined } from '@ant-design/icons'
+import { Navbar, NavbarRight } from '@renderer/components/app/Navbar'
 import { HStack } from '@renderer/components/Layout'
 import MinAppsPopover from '@renderer/components/Popups/MinAppsPopover'
 import SearchPopup from '@renderer/components/Popups/SearchPopup'
 import { isMac, isWindows } from '@renderer/config/constant'
 import { useAssistant } from '@renderer/hooks/useAssistant'
 import { useSettings } from '@renderer/hooks/useSettings'
-import { useShortcut } from '@renderer/hooks/useShortcuts'
-import { useShowAssistants, useShowTopics } from '@renderer/hooks/useStore'
+import { useShowAssistants } from '@renderer/hooks/useStore'
 import AssistantSettingsPopup from '@renderer/pages/settings/AssistantSettings'
-import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
 import { useAppDispatch } from '@renderer/store'
-import { setNarrowMode } from '@renderer/store/settings'
-import { Assistant, Topic } from '@renderer/types'
+import { setNarrowMode, toggleShowRightSidebar } from '@renderer/store/settings'
+import { Assistant } from '@renderer/types'
 import { FC } from 'react'
 import styled from 'styled-components'
 
@@ -20,46 +18,17 @@ import SelectModelButton from './components/SelectModelButton'
 
 interface Props {
   activeAssistant: Assistant
-  activeTopic: Topic
-  setActiveTopic: (topic: Topic) => void
   onCreateAssistant: () => void
 }
 
-const HeaderNavbar: FC<Props> = ({ activeAssistant, onCreateAssistant }) => {
+const HeaderNavbar: FC<Props> = ({ activeAssistant }) => {
   const { assistant } = useAssistant(activeAssistant.id)
   const { showAssistants, toggleShowAssistants } = useShowAssistants()
-  const { topicPosition, sidebarIcons, narrowMode } = useSettings()
-  const { showTopics, toggleShowTopics } = useShowTopics()
+  const { sidebarIcons, narrowMode, enableRightSidebar, showRightSidebar } = useSettings()
   const dispatch = useAppDispatch()
 
-  useShortcut('toggle_show_assistants', () => {
-    toggleShowAssistants()
-  })
-
-  useShortcut('toggle_show_topics', () => {
-    if (topicPosition === 'right') {
-      toggleShowTopics()
-    } else {
-      EventEmitter.emit(EVENT_NAMES.SHOW_TOPIC_SIDEBAR)
-    }
-  })
-
-  useShortcut('search_message', () => {
-    SearchPopup.show()
-  })
-
   return (
-    <Navbar className="home-navbar">
-      {showAssistants && (
-        <NavbarLeft style={{ justifyContent: 'space-between', borderRight: 'none', padding: 0 }}>
-          <NavbarIcon onClick={toggleShowAssistants} style={{ marginLeft: isMac ? 16 : 0 }}>
-            <i className="iconfont icon-hide-sidebar" />
-          </NavbarIcon>
-          <NavbarIcon onClick={onCreateAssistant}>
-            <PlusOutlined />
-          </NavbarIcon>
-        </NavbarLeft>
-      )}
+    <Navbar>
       <NavbarRight
         style={{ justifyContent: 'space-between', paddingRight: isWindows ? 140 : 12, flex: 1 }}
         className="home-navbar-right">
@@ -91,9 +60,9 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant, onCreateAssistant }) => {
               </NarrowIcon>
             </MinAppsPopover>
           )}
-          {topicPosition === 'right' && (
-            <NarrowIcon onClick={toggleShowTopics}>
-              <i className={`iconfont icon-${showTopics ? 'show' : 'hide'}-sidebar`} />
+          {enableRightSidebar && (
+            <NarrowIcon onClick={() => dispatch(toggleShowRightSidebar())}>
+              <i className={`iconfont icon-${showRightSidebar ? 'show' : 'hide'}-sidebar`} />
             </NarrowIcon>
           )}
         </HStack>

@@ -1,19 +1,16 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  FormOutlined,
   MinusCircleOutlined,
   PlusOutlined,
-  SaveOutlined,
-  // CaretRightOutlined,
-  FormOutlined
+  SaveOutlined
 } from '@ant-design/icons'
 import DragableList from '@renderer/components/DragableList'
 import CopyIcon from '@renderer/components/Icons/CopyIcon'
 import Scrollbar from '@renderer/components/Scrollbar'
 import { useAgents } from '@renderer/hooks/useAgents'
-import { useAssistant, useAssistants } from '@renderer/hooks/useAssistant'
-// import { modelGenerating } from '@renderer/hooks/useRuntime'
-// import { useSettings } from '@renderer/hooks/useSettings'
+import { useAssistants } from '@renderer/hooks/useAssistant'
 import AssistantSettingsPopup from '@renderer/pages/settings/AssistantSettings'
 import { getDefaultTopic } from '@renderer/services/AssistantService'
 import { EVENT_NAMES, EventEmitter } from '@renderer/services/EventService'
@@ -25,9 +22,8 @@ import { last, omit } from 'lodash'
 import { FC, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
 import Topics from './TopicsTab'
-import { useShortcuts } from '@renderer/hooks/useShortcuts'
-import { isMac, isWindows } from '@renderer/config/constant'
 
 interface Props {
   activeAssistant: Assistant
@@ -36,31 +32,6 @@ interface Props {
   onCreateDefaultAssistant: () => void
   onCreateAssistant: () => void
   setActiveTopic: (topic: Topic) => void
-}
-
-const formatShortcut = (shortcut: string[]): string => {
-  return shortcut
-    .map((key) => {
-      switch (key) {
-        case 'Control':
-          return isMac ? '⌃' : 'Ctrl'
-        case 'Ctrl':
-          return isMac ? '⌃' : 'Ctrl'
-        case 'Command':
-          return isMac ? '⌘' : isWindows ? 'Win' : 'Super'
-        case 'Alt':
-          return isMac ? '⌥' : 'Alt'
-        case 'Shift':
-          return isMac ? '⇧' : 'Shift'
-        case 'CommandOrControl':
-          return isMac ? '⌘' : 'Ctrl'
-        case ' ':
-          return 'Space'
-        default:
-          return key.charAt(0).toUpperCase() + key.slice(1)
-      }
-    })
-    .join(' + ')
 }
 
 //整个页面最外层容器
@@ -186,8 +157,6 @@ const Assistants: FC<Props> = ({
   const [expandedAssistants, setExpandedAssistants] = useState<{ [key: string]: boolean }>({})
   const { t } = useTranslation()
   const { addAgent } = useAgents()
-  const { shortcuts } = useShortcuts()
-  const newTopicShortcut = shortcuts.find((s) => s.key === 'new_topic')?.shortcut || []
 
   const clearAssistantTopics = useCallback(
     (assistantId: string) => {

@@ -13,8 +13,8 @@ import paintings from './paintings'
 import runtime from './runtime'
 import settings from './settings'
 import shortcuts from './shortcuts'
-import tabs from './tabs'
 import type { TabsState } from './tabs'
+import tabs from './tabs'
 
 export interface RootState {
   assistants: any
@@ -46,7 +46,7 @@ const persistedReducer = persistReducer(
   {
     key: 'cherry-studio',
     storage,
-    version: 61,
+    version: 63,
     blacklist: ['runtime'],
     migrate
   },
