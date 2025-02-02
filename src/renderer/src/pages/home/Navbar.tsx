@@ -38,10 +38,7 @@ const HeaderNavbar: FC<Props> = ({ activeAssistant }) => {
               <i className="iconfont icon-show-sidebar" />
             </NavbarIcon>
           )}
-          <TitleText
-            style={{ marginRight: 10, cursor: 'pointer' }}
-            className="nodrag"
-            onClick={() => AssistantSettingsPopup.show({ assistant })}>
+          <TitleText className="nodrag" onClick={() => AssistantSettingsPopup.show({ assistant })}>
             {assistant.name}
           </TitleText>
           <SelectModelButton assistant={assistant} />
@@ -106,12 +103,22 @@ export const NavbarIcon = styled.div`
 `
 
 const TitleText = styled.span`
-  margin-left: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   font-family: Ubuntu;
   font-size: 12px;
   user-select: none;
-  @media (max-width: 1080px) {
-    display: none;
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 0.5px solid var(--color-border-soft);
+
+  &:hover {
+    background-color: var(--color-background-mute);
+    border: 0.5px solid var(--color-border);
   }
 `
 
