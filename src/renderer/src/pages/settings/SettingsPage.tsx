@@ -16,6 +16,7 @@ import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import AboutSettings from './AboutSettings'
+import CustomMinAppSettings from './CustomMinAppSettings'
 import DataSettings from './DataSettings/DataSettings'
 import DisplaySettings from './DisplaySettings/DisplaySettings'
 import GeneralSettings from './GeneralSettings'
@@ -23,7 +24,6 @@ import ModelSettings from './ModalSettings/ModelSettings'
 import ProvidersList from './ProviderSettings'
 import QuickAssistantSettings from './QuickAssistantSettings'
 import ShortcutSettings from './ShortcutSettings'
-import CustomMinAppSettings from './CustomMinAppSettings'
 
 const SettingsPage: FC = () => {
   const { pathname } = useLocation()
